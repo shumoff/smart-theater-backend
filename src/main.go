@@ -18,7 +18,7 @@ func main() {
 	err = db.Ping()
 	panicOnErr(err)
 
-	InitStore(&dbStore{db: db})
+	initStore(&dbStore{db: db})
 }
 
 // panicOnErr panics err is not nil.

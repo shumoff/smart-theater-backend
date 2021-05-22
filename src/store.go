@@ -42,6 +42,6 @@ func (store *dbStore) GetBirds() ([]*Bird, error) {
 
 var store Store
 
-func InitStore(s Store) {
+func initStore(s Store) {
 	store = s
 }
