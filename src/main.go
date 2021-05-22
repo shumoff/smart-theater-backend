@@ -5,13 +5,9 @@ import (
 	"fmt"
 
 	_ "github.com/lib/pq"
-)
 
-func panicOnErr(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
+	"github.com/shumoff/smart-theater-backend/utils"
+)
 
 type application struct {
 	config Config
