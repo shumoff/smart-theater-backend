@@ -1,1 +1,1 @@
-# SmartTheaterBackend
+# smart-theater-backend
