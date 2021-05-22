@@ -28,6 +28,7 @@ func (s *StoreSuite) SetupSuite() {
 	if err != nil {
 		s.T().Fatal(err)
 	}
+
 	s.db = db
 	s.store = &dbStore{db: db}
 }

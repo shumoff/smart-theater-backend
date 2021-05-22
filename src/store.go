@@ -26,13 +26,17 @@ func (store *dbStore) GetBirds() ([]*Bird, error) {
 	defer rows.Close()
 
 	birds := []*Bird{}
+
 	for rows.Next() {
 		bird := &Bird{}
+
 		if err := rows.Scan(&bird.Species, &bird.Description); err != nil {
 			return nil, err
 		}
+
 		birds = append(birds, bird)
 	}
+
 	return birds, nil
 }
 

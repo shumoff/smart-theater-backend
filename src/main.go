@@ -11,6 +11,7 @@ import (
 func main() {
 	// ...
 	connString := "dbname=test_db user=dostavisor_user password=password sslmode=disable"
+
 	db, err := sql.Open("postgres", connString)
 	panicOnErr(err)
 
