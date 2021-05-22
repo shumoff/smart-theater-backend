@@ -6,11 +6,12 @@ import (
 
 	_ "github.com/lib/pq"
 
+	conf "github.com/shumoff/smart-theater-backend/config"
 	"github.com/shumoff/smart-theater-backend/utils"
 )
 
 type application struct {
-	config Config
+	config conf.Config
 	store  *Store
 	server Server
 }
@@ -19,8 +20,8 @@ func (app *application) start() {
 	app.server.Serve()
 }
 
-func initApp() (*application, error) {
-	var config Config
+func initApp(app *application) error {
+	var config conf.Config
 	config.ReadConfig()
 
 	connString := fmt.Sprintf(

@@ -1,9 +1,11 @@
-package main
+package config
 
 import (
 	"os"
 
 	"gopkg.in/yaml.v3"
+
+	"github.com/shumoff/smart-theater-backend/utils"
 )
 
 type Config struct {
@@ -15,12 +17,12 @@ type Config struct {
 
 func (config *Config) ReadConfig() {
 	f, err := os.Open("config.yml")
-	panicOnErr(err)
+	utils.PanicOnErr(err)
 	defer f.Close()
 
 	decoder := yaml.NewDecoder(f)
 	err = decoder.Decode(config)
-	panicOnErr(err)
+	utils.PanicOnErr(err)
 	//config.DbName = os.Getenv("POSTGRES_DB")
 	//config.DbUser = os.Getenv("POSTGRES_USER")
 	//config.DbPassword = os.Getenv("POSTGRES_PASSWORD")
