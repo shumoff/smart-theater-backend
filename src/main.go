@@ -12,15 +12,17 @@ func main() {
 	// ...
 	connString := "dbname=test_db user=dostavisor_user password=password sslmode=disable"
 	db, err := sql.Open("postgres", connString)
+	panicOnErr(err)
 
-	if err != nil {
-		panic(err)
-	}
 	err = db.Ping()
-
-	if err != nil {
-		panic(err)
-	}
+	panicOnErr(err)
 
 	InitStore(&dbStore{db: db})
+}
+
+// panicOnErr panics err is not nil.
+func panicOnErr(err error) {
+	if err != nil {
+		panic(err)
+	}
 }
