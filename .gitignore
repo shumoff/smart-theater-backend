@@ -16,3 +16,13 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+# Docker
+volumes
+
+# Environments
+.env
+env/
+
+# Configuration
+config.yml
