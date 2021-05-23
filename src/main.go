@@ -13,17 +13,19 @@ func panicOnErr(err error) {
 	}
 }
 
-type App struct {
+type application struct {
 	config Config
-	store  Store
+	store  *Store
 	server Server
 }
 
-var app App
+func (app *application) start() {
+	app.server.Serve()
+}
 
-func initApp(app *App) error {
+func initApp() (*application, error) {
 	var config Config
-	config.readConfig()
+	config.ReadConfig()
 
 	connString := fmt.Sprintf(
 		"dbname=%s user=%s password=%s sslmode=disable",
@@ -31,6 +33,7 @@ func initApp(app *App) error {
 		config.DbUser,
 		config.DbPassword,
 	)
+
 	db, err := sql.Open("postgres", connString)
 	panicOnErr(err)
 
@@ -38,17 +41,15 @@ func initApp(app *App) error {
 	panicOnErr(err)
 
 	store := Store{db: db}
-	server := Server{port: config.Port}
+	server := Server{port: config.Port, store: &store}
 
-	app.config = config
-	app.store = store
-	app.server = server
+	app := application{config: config, server: server, store: &store}
 
-	return nil
+	return &app, nil
 }
 
 func main() {
-	err := initApp(&app)
+	app, err := initApp()
 	panicOnErr(err)
-	app.server.serve()
+	app.start()
 }

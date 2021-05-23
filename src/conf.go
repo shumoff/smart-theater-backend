@@ -13,7 +13,7 @@ type Config struct {
 	Port       string `yaml:"port"`
 }
 
-func (config *Config) readConfig() {
+func (config *Config) ReadConfig() {
 	f, err := os.Open("config.yml")
 	panicOnErr(err)
 	defer f.Close()

@@ -8,7 +8,8 @@ import (
 )
 
 type Server struct {
-	port string
+	port  string
+	store *Store
 }
 
 type Movie struct {
@@ -20,26 +21,27 @@ type Movie struct {
 	PosterUrl   string `json:"poster_url"`
 }
 
-func getMovieHandler(w http.ResponseWriter, r *http.Request) {
-	idRegexp := regexp.MustCompile("^/(movies)/([0-9]+)$")
-	movieId := idRegexp.FindStringSubmatch(r.URL.Path)[2]
+func (s *Server) getMovieHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		idRegexp := regexp.MustCompile("^/(movies)/([0-9]+)$")
+		movieId := idRegexp.FindStringSubmatch(r.URL.Path)[2]
 
-	movie, err := app.store.GetMovieInfo(movieId)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		movie, err := s.store.GetMovieInfo(movieId)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		err = json.NewEncoder(w).Encode(movie)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
-
-	err = json.NewEncoder(w).Encode(movie)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 }
 
-func (server *Server) serve() {
-	http.HandleFunc("/movies/", getMovieHandler)
+func (s *Server) Serve() {
+	http.HandleFunc("/movies/", s.getMovieHandler())
 
-	log.Fatal(http.ListenAndServe(":"+server.port, nil))
+	log.Fatal(http.ListenAndServe(":"+s.port, nil))
 }
