@@ -10,22 +10,17 @@ type Store struct {
 }
 
 func (store *Store) GetMovieInfo(id string) (*Movie, error) {
-	rows, err := store.db.Query(
-		"SELECT id, title, description, release_date, poster_url from movies WHERE id = " +
-			id + ";",
-	)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
+	queryString := "SELECT id, title, description, release_date, poster_url from movies WHERE id = $1;"
+	row := store.db.QueryRow(queryString, id)
 
 	movie := &Movie{}
 
-	for rows.Next() {
-		err = rows.Scan(movie.Id, movie.Title, movie.Description, movie.ReleaseDate, movie.PosterUrl)
-		if err != nil {
-			return nil, fmt.Errorf("could not get movie from db: %w", err)
+	err := row.Scan(&movie.Id, &movie.Title, &movie.Description, &movie.ReleaseDate, &movie.PosterUrl)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("there is no such movie: %w", err)
 		}
+		return nil, fmt.Errorf("could not get movie from db: %w", err)
 	}
 
 	return movie, nil

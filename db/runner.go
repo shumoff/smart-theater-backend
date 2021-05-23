@@ -13,7 +13,11 @@ import (
 
 func main() {
 	config := conf.Config{}
-	config.ReadConfig()
+
+	if err := config.ReadConfig(); err != nil {
+		log.Fatal(err)
+		return
+	}
 
 	databaseUrl := fmt.Sprintf(
 		"postgres://%s:%s@localhost:5432/%s?sslmode=disable",
@@ -21,6 +25,7 @@ func main() {
 		config.DbPassword,
 		config.DbName,
 	)
+
 	m, err := migrate.New(
 		"file://db/migrations",
 		databaseUrl,
@@ -28,6 +33,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	if err := m.Up(); err != nil {
 		log.Fatal(err)
 	}

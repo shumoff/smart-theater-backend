@@ -3,12 +3,16 @@ package main
 import (
 	"database/sql"
 	"fmt"
-
 	_ "github.com/lib/pq"
 
 	conf "github.com/shumoff/smart-theater-backend/config"
-	"github.com/shumoff/smart-theater-backend/utils"
 )
+
+func panicOnErr(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
 
 type application struct {
 	config conf.Config
@@ -20,9 +24,12 @@ func (app *application) start() {
 	app.server.Serve()
 }
 
-func initApp(app *application) error {
+func initApp() (*application, error) {
 	var config conf.Config
-	config.ReadConfig()
+
+	if err := config.ReadConfig(); err != nil {
+		panicOnErr(err)
+	}
 
 	connString := fmt.Sprintf(
 		"dbname=%s user=%s password=%s sslmode=disable",
@@ -48,5 +55,6 @@ func initApp(app *application) error {
 func main() {
 	app, err := initApp()
 	panicOnErr(err)
+
 	app.start()
 }
