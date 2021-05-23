@@ -1,7 +1,9 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"regexp"
@@ -13,12 +15,12 @@ type Server struct {
 }
 
 type Movie struct {
-	Id          int64  `json:"id"`
-	Title       string `json:"title"`
-	Genre       string `json:"genre"`
-	Description string `json:"description"`
-	ReleaseDate int16  `json:"release_date"`
-	PosterUrl   string `json:"poster_url"`
+	Id          int64   `json:"id"`
+	Title       string  `json:"title"`
+	Description *string `json:"description"`
+	ReleaseDate *int16  `json:"release_date"`
+	PosterUrl   *string `json:"poster_url"`
+	IsActive    bool    `json:"is_active"`
 }
 
 func (s *Server) getMovieHandler() http.HandlerFunc {
@@ -28,7 +30,11 @@ func (s *Server) getMovieHandler() http.HandlerFunc {
 
 		movie, err := s.store.GetMovieInfo(movieId)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			if errors.Is(err, sql.ErrNoRows) {
+				http.Error(w, err.Error(), http.StatusNotFound)
+			} else {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
 			return
 		}
 
