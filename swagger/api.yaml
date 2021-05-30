@@ -1,0 +1,300 @@
+openapi: 3.0.3
+info:
+  title: SmartTheater
+  description: API для приложения SmartTheater
+  version: 1.0.0
+servers:
+  - url: https://smart-theater.ru/api
+
+tags:
+  - name: "auth"
+    description: Авторизация
+  - name: "users"
+    description: Пользователи
+  - name: "movies"
+    description: Фильмы
+  - name: "recommendations"
+    description: Рекомендации
+
+components:
+
+  securitySchemes:
+    HeaderAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: 'Ожидаемый формат значения хедера авторизации: Token {str}'
+
+  schemas:
+    v1UserProfile:
+      type: object
+      description: User profile info
+      required:
+        - user_id
+        - username
+      properties:
+        user_id:
+          type: integer
+          minimum: 1
+          description: Movie id
+        username:
+          type: string
+          description: username
+          example: oxigen1um
+        photo_url:
+          type: string
+          description: User's profile picture
+          example: https://avatars.githubusercontent.com/u/22895432?v=4
+
+    v1MovieInfo:
+      type: object
+      description: Movie info
+      required:
+        - movie_id
+        - title
+      properties:
+        movie_id:
+          type: integer
+          minimum: 1
+          description: Movie id
+        title:
+          type: string
+          description: Movie title
+          example: Lock, Stock and Two Smoking Barrels
+        description:
+          type: string
+          description: Movie description
+          example: A card shark and his unwillingly-enlisted friends need to make a lot of cash quick after losing a sketchy poker match. To do this they decide to pull a heist on a small-time gang who happen to be operating out of the flat next door.
+        release_date:
+          type: integer
+          description: Release year
+          example: 1998
+        poster_url:
+          type: string
+          description: Movie poster link
+          example: https://m.media-amazon.com/images/M/MV5BMDU2ZWJlMjktMTRhMy00ZTA5LWEzNDgtYmNmZTEwZTViZWJkXkEyXkFqcGdeQXVyNDQ2OTk4MzI@._V1_FMjpg_UX1005_.jpg
+
+    v1PreviewMovieInfo:
+      type: object
+      description: Movie preview info
+      required:
+        - movie_id
+        - title
+      properties:
+        movie_id:
+          type: integer
+          minimum: 1
+          description: Movie id
+        title:
+          type: string
+          description: Movie title
+          example: Lock, Stock and Two Smoking Barrels
+        description:
+          type: string
+          description: Movie description
+          example: A card shark and his unwillingly-enlisted friends need to make a lot of cash quick after losing a sketchy poker match. To do this they decide to pull a heist on a small-time gang who happen to be operating out of the flat next door.
+        release_date:
+          type: integer
+          description: Release year
+          example: 1998
+        poster_url:
+          type: string
+          description: Movie poster link
+          example: https://m.media-amazon.com/images/M/MV5BMDU2ZWJlMjktMTRhMy00ZTA5LWEzNDgtYmNmZTEwZTViZWJkXkEyXkFqcGdeQXVyNDQ2OTk4MzI@._V1_FMjpg_UX1005_.jpg
+
+  requestBodies:
+    v2PostMovieRatingRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              rating:
+                type: integer
+                example: 7
+
+  parameters:
+    UserId:
+      name: user_id
+      in: path
+      description: User id
+      schema:
+        type: integer
+        minimum: 1
+      required: true
+    MovieId:
+      name: movie_id
+      in: path
+      description: Movie id
+      schema:
+        type: integer
+        minimum: 1
+      required: true
+    Offset:
+      name: offset
+      in: query
+      description: Offset
+      schema:
+        type: integer
+        minimum: 0
+      required: false
+    Limit:
+      name: limit
+      in: query
+      description: Limit
+      schema:
+        type: integer
+        minimum: 0
+      required: false
+    Query:
+      name: q
+      in: query
+      description: Search string
+      schema:
+        type: string
+        example: lock stock and two smoking barrels
+      required: true
+
+  responses:
+    v1GetUserProfile:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/v1PreviewMovieInfo'
+
+    v1GetMoviesInfo:
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/v1PreviewMovieInfo'
+
+    v1GetMovieInfo:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/v1MovieInfo'
+
+paths:
+  /v1/user/{user_id}/profile:
+    get:
+      summary: User profile (not implemented yet)
+      tags:
+        - users
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        200:
+          $ref: '#/components/responses/v1GetUserProfile'
+
+  /v1/user/{user_id}/movies:
+    get:
+      summary: User's movies
+      tags:
+        - users
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        200:
+          $ref: '#/components/responses/v1GetMoviesInfo'
+
+  /v1/movies:
+    get:
+      summary: Movies main page
+      tags:
+        - movies
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        200:
+          $ref: '#/components/responses/v1GetMoviesInfo'
+
+  /v1/movies/{movie_id}:
+    get:
+      summary: Get movie info
+      tags:
+        - movies
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/MovieId'
+      responses:
+        200:
+          $ref: '#/components/responses/v1GetMovieInfo'
+    post:
+      summary: Rate a movie
+      tags:
+        - movies
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/MovieId'
+      requestBody:
+        $ref: "#/components/requestBodies/v2PostMovieRatingRequest"
+      responses:
+        200:
+          description: OK
+
+  /v1/recommendations/user/{user_id}:
+    get:
+      summary: Get recommended movies
+      tags:
+        - recommendations
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        200:
+          $ref: '#/components/responses/v1GetMoviesInfo'
+
+  /v1/recommendations/movie/{movie_id}:
+    get:
+      summary: Get similar movies
+      tags:
+        - recommendations
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/MovieId'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        200:
+          $ref: '#/components/responses/v1GetMoviesInfo'
+
+  /v1/recommendations/user/{user_id}/movie/{movie_id}:
+    get:
+      summary: Get user-relevant similar movies
+      tags:
+        - recommendations
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+        - $ref: '#/components/parameters/MovieId'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        200:
+          $ref: '#/components/responses/v1GetMoviesInfo'
+
+  /v1/movies/search:
+    get:
+      summary: Search movie by title
+      tags:
+        - recommendations
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Query'
+      responses:
+        200:
+          $ref: '#/components/responses/v1GetMoviesInfo'
