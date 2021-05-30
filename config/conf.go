@@ -8,10 +8,13 @@ import (
 )
 
 type Config struct {
-	DbName     string `yaml:"postgres_db"`
-	DbUser     string `yaml:"postgres_user"`
-	DbPassword string `yaml:"postgres_password"`
-	Port       string `yaml:"port"`
+	DbName             string `yaml:"postgres_db"`
+	DbUser             string `yaml:"postgres_user"`
+	DbPassword         string `yaml:"postgres_password"`
+	DbHost             string `yaml:"postgres_host"`
+	DbPort             string `yaml:"postgres_port"`
+	ServerPort         string `yaml:"server_port"`
+	RecommenderAddress string `yaml:"recommender_address"`
 }
 
 func (config *Config) ReadConfig() error {
@@ -28,7 +31,7 @@ func (config *Config) ReadConfig() error {
 	}
 
 	//TODO SMART-5: start using environmental configuration
-	//config.Port = os.Getenv("PORT")
+	//config.ServerPort = os.Getenv("PORT")
 	//config.DbPassword = os.Getenv("POSTGRES_PASSWORD")
 	//config.DbUser = os.Getenv("POSTGRES_USER")
 	//config.DbName = os.Getenv("POSTGRES_DB")
