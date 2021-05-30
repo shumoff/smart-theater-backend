@@ -18,7 +18,9 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RecommenderClient interface {
-	Recommend(ctx context.Context, in *RecommendationRequest, opts ...grpc.CallOption) (*RecommendationResponse, error)
+	RecommendMovie(ctx context.Context, in *RelevantMovieRequest, opts ...grpc.CallOption) (*RecommendationResponse, error)
+	RecommendSimilarMovie(ctx context.Context, in *SimilarMovieRequest, opts ...grpc.CallOption) (*RecommendationResponse, error)
+	RecommendRelevantSimilarMovie(ctx context.Context, in *RelevantSimilarMovieRequest, opts ...grpc.CallOption) (*RecommendationResponse, error)
 }
 
 type recommenderClient struct {
@@ -29,9 +31,27 @@ func NewRecommenderClient(cc grpc.ClientConnInterface) RecommenderClient {
 	return &recommenderClient{cc}
 }
 
-func (c *recommenderClient) Recommend(ctx context.Context, in *RecommendationRequest, opts ...grpc.CallOption) (*RecommendationResponse, error) {
+func (c *recommenderClient) RecommendMovie(ctx context.Context, in *RelevantMovieRequest, opts ...grpc.CallOption) (*RecommendationResponse, error) {
 	out := new(RecommendationResponse)
-	err := c.cc.Invoke(ctx, "/Recommender/Recommend", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/Recommender/RecommendMovie", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *recommenderClient) RecommendSimilarMovie(ctx context.Context, in *SimilarMovieRequest, opts ...grpc.CallOption) (*RecommendationResponse, error) {
+	out := new(RecommendationResponse)
+	err := c.cc.Invoke(ctx, "/Recommender/RecommendSimilarMovie", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *recommenderClient) RecommendRelevantSimilarMovie(ctx context.Context, in *RelevantSimilarMovieRequest, opts ...grpc.CallOption) (*RecommendationResponse, error) {
+	out := new(RecommendationResponse)
+	err := c.cc.Invoke(ctx, "/Recommender/RecommendRelevantSimilarMovie", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +62,9 @@ func (c *recommenderClient) Recommend(ctx context.Context, in *RecommendationReq
 // All implementations must embed UnimplementedRecommenderServer
 // for forward compatibility
 type RecommenderServer interface {
-	Recommend(context.Context, *RecommendationRequest) (*RecommendationResponse, error)
+	RecommendMovie(context.Context, *RelevantMovieRequest) (*RecommendationResponse, error)
+	RecommendSimilarMovie(context.Context, *SimilarMovieRequest) (*RecommendationResponse, error)
+	RecommendRelevantSimilarMovie(context.Context, *RelevantSimilarMovieRequest) (*RecommendationResponse, error)
 	mustEmbedUnimplementedRecommenderServer()
 }
 
@@ -50,8 +72,14 @@ type RecommenderServer interface {
 type UnimplementedRecommenderServer struct {
 }
 
-func (UnimplementedRecommenderServer) Recommend(context.Context, *RecommendationRequest) (*RecommendationResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Recommend not implemented")
+func (UnimplementedRecommenderServer) RecommendMovie(context.Context, *RelevantMovieRequest) (*RecommendationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RecommendMovie not implemented")
+}
+func (UnimplementedRecommenderServer) RecommendSimilarMovie(context.Context, *SimilarMovieRequest) (*RecommendationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RecommendSimilarMovie not implemented")
+}
+func (UnimplementedRecommenderServer) RecommendRelevantSimilarMovie(context.Context, *RelevantSimilarMovieRequest) (*RecommendationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RecommendRelevantSimilarMovie not implemented")
 }
 func (UnimplementedRecommenderServer) mustEmbedUnimplementedRecommenderServer() {}
 
@@ -66,20 +94,56 @@ func RegisterRecommenderServer(s grpc.ServiceRegistrar, srv RecommenderServer) {
 	s.RegisterService(&Recommender_ServiceDesc, srv)
 }
 
-func _Recommender_Recommend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RecommendationRequest)
+func _Recommender_RecommendMovie_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RelevantMovieRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RecommenderServer).Recommend(ctx, in)
+		return srv.(RecommenderServer).RecommendMovie(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/Recommender/Recommend",
+		FullMethod: "/Recommender/RecommendMovie",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RecommenderServer).Recommend(ctx, req.(*RecommendationRequest))
+		return srv.(RecommenderServer).RecommendMovie(ctx, req.(*RelevantMovieRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Recommender_RecommendSimilarMovie_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SimilarMovieRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RecommenderServer).RecommendSimilarMovie(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Recommender/RecommendSimilarMovie",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RecommenderServer).RecommendSimilarMovie(ctx, req.(*SimilarMovieRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Recommender_RecommendRelevantSimilarMovie_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RelevantSimilarMovieRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RecommenderServer).RecommendRelevantSimilarMovie(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Recommender/RecommendRelevantSimilarMovie",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RecommenderServer).RecommendRelevantSimilarMovie(ctx, req.(*RelevantSimilarMovieRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -92,8 +156,16 @@ var Recommender_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*RecommenderServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Recommend",
-			Handler:    _Recommender_Recommend_Handler,
+			MethodName: "RecommendMovie",
+			Handler:    _Recommender_RecommendMovie_Handler,
+		},
+		{
+			MethodName: "RecommendSimilarMovie",
+			Handler:    _Recommender_RecommendSimilarMovie_Handler,
+		},
+		{
+			MethodName: "RecommendRelevantSimilarMovie",
+			Handler:    _Recommender_RecommendRelevantSimilarMovie_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -6,6 +6,7 @@ import (
 	_ "github.com/lib/pq"
 
 	conf "github.com/shumoff/smart-theater-backend/config"
+	"github.com/shumoff/smart-theater-backend/recommender_grpc"
 )
 
 func panicOnErr(err error) {
@@ -15,9 +16,10 @@ func panicOnErr(err error) {
 }
 
 type application struct {
-	config conf.Config
-	store  *Store
-	server Server
+	config            conf.Config
+	recommenderClient *recommender_grpc.RecommenderClient
+	store             *Store
+	server            Server
 }
 
 func (app *application) start() {
@@ -32,10 +34,11 @@ func initApp() (*application, error) {
 	}
 
 	connString := fmt.Sprintf(
-		"dbname=%s user=%s password=%s sslmode=disable",
+		"dbname=%s user=%s password=%s port=%s sslmode=disable",
 		config.DbName,
 		config.DbUser,
 		config.DbPassword,
+		config.DbPort,
 	)
 
 	db, err := sql.Open("postgres", connString)
@@ -44,8 +47,9 @@ func initApp() (*application, error) {
 	err = db.Ping()
 	panicOnErr(err)
 
+	recommenderClient := recommender_grpc.RecommenderClient{Address: config.RecommenderAddress}
 	store := Store{db: db}
-	server := Server{port: config.Port, store: &store}
+	server := Server{port: config.ServerPort, store: &store, recommenderClient: &recommenderClient}
 
 	app := application{config: config, server: server, store: &store}
 
