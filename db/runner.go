@@ -20,9 +20,10 @@ func main() {
 	}
 
 	databaseUrl := fmt.Sprintf(
-		"postgres://%s:%s@localhost:5432/%s?sslmode=disable",
+		"postgres://%s:%s@localhost:%s/%s?sslmode=disable",
 		config.DbUser,
 		config.DbPassword,
+		config.DbPort,
 		config.DbName,
 	)
 
