@@ -18,6 +18,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RecommenderClient interface {
+	SaveNewRating(ctx context.Context, in *NewRatingRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	RecommendMovie(ctx context.Context, in *RelevantMovieRequest, opts ...grpc.CallOption) (*RecommendationResponse, error)
 	RecommendSimilarMovie(ctx context.Context, in *SimilarMovieRequest, opts ...grpc.CallOption) (*RecommendationResponse, error)
 	RecommendRelevantSimilarMovie(ctx context.Context, in *RelevantSimilarMovieRequest, opts ...grpc.CallOption) (*RecommendationResponse, error)
@@ -29,6 +30,15 @@ type recommenderClient struct {
 
 func NewRecommenderClient(cc grpc.ClientConnInterface) RecommenderClient {
 	return &recommenderClient{cc}
+}
+
+func (c *recommenderClient) SaveNewRating(ctx context.Context, in *NewRatingRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, "/Recommender/SaveNewRating", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *recommenderClient) RecommendMovie(ctx context.Context, in *RelevantMovieRequest, opts ...grpc.CallOption) (*RecommendationResponse, error) {
@@ -62,6 +72,7 @@ func (c *recommenderClient) RecommendRelevantSimilarMovie(ctx context.Context, i
 // All implementations must embed UnimplementedRecommenderServer
 // for forward compatibility
 type RecommenderServer interface {
+	SaveNewRating(context.Context, *NewRatingRequest) (*EmptyResponse, error)
 	RecommendMovie(context.Context, *RelevantMovieRequest) (*RecommendationResponse, error)
 	RecommendSimilarMovie(context.Context, *SimilarMovieRequest) (*RecommendationResponse, error)
 	RecommendRelevantSimilarMovie(context.Context, *RelevantSimilarMovieRequest) (*RecommendationResponse, error)
@@ -72,6 +83,9 @@ type RecommenderServer interface {
 type UnimplementedRecommenderServer struct {
 }
 
+func (UnimplementedRecommenderServer) SaveNewRating(context.Context, *NewRatingRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveNewRating not implemented")
+}
 func (UnimplementedRecommenderServer) RecommendMovie(context.Context, *RelevantMovieRequest) (*RecommendationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RecommendMovie not implemented")
 }
@@ -92,6 +106,24 @@ type UnsafeRecommenderServer interface {
 
 func RegisterRecommenderServer(s grpc.ServiceRegistrar, srv RecommenderServer) {
 	s.RegisterService(&Recommender_ServiceDesc, srv)
+}
+
+func _Recommender_SaveNewRating_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NewRatingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RecommenderServer).SaveNewRating(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Recommender/SaveNewRating",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RecommenderServer).SaveNewRating(ctx, req.(*NewRatingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Recommender_RecommendMovie_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -155,6 +187,10 @@ var Recommender_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "Recommender",
 	HandlerType: (*RecommenderServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "SaveNewRating",
+			Handler:    _Recommender_SaveNewRating_Handler,
+		},
 		{
 			MethodName: "RecommendMovie",
 			Handler:    _Recommender_RecommendMovie_Handler,
