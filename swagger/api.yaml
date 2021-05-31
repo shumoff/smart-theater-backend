@@ -9,12 +9,14 @@ servers:
 tags:
   - name: "auth"
     description: Авторизация
-  - name: "users"
-    description: Пользователи
   - name: "movies"
     description: Фильмы
+  - name: "ratings"
+    description: Оценки
   - name: "recommendations"
     description: Рекомендации
+  - name: "users"
+    description: Пользователи
 
 components:
 
@@ -160,7 +162,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/v1PreviewMovieInfo'
+            $ref: '#/components/schemas/v1UserProfile'
 
     v1GetMoviesInfo:
       description: OK
@@ -179,9 +181,9 @@ components:
             $ref: '#/components/schemas/v1MovieInfo'
 
 paths:
-  /v1/user/{user_id}/profile:
+  /v1/users/{user_id}/profile:
     get:
-      summary: User profile (not implemented yet)
+      summary: User profile
       tags:
         - users
       security: []
@@ -191,7 +193,7 @@ paths:
         200:
           $ref: '#/components/responses/v1GetUserProfile'
 
-  /v1/user/{user_id}/movies:
+  /v1/users/{user_id}/movies:
     get:
       summary: User's movies
       tags:
@@ -229,12 +231,15 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/v1GetMovieInfo'
+
+  /v1/ratings/user/{user_id}/movie/{movie_id}:
     post:
       summary: Rate a movie
       tags:
-        - movies
+        - ratings
       security: []
       parameters:
+        - $ref: '#/components/parameters/UserId'
         - $ref: '#/components/parameters/MovieId'
       requestBody:
         $ref: "#/components/requestBodies/v2PostMovieRatingRequest"
@@ -289,7 +294,7 @@ paths:
     get:
       summary: Search movie by title
       tags:
-        - recommendations
+        - movies
       security: []
       parameters:
         - $ref: '#/components/parameters/Offset'
