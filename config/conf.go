@@ -1,40 +1,27 @@
 package config
 
 import (
-	"fmt"
 	"os"
-
-	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
-	DbName             string `yaml:"postgres_db"`
-	DbUser             string `yaml:"postgres_user"`
-	DbPassword         string `yaml:"postgres_password"`
-	DbHost             string `yaml:"postgres_host"`
-	DbPort             string `yaml:"postgres_port"`
-	ServerPort         string `yaml:"server_port"`
-	RecommenderAddress string `yaml:"recommender_address"`
+	DbName             string
+	DbUser             string
+	DbPassword         string
+	DbHost             string
+	DbPort             string
+	ServerPort         string
+	RecommenderAddress string
 }
 
 func (config *Config) ReadConfig() error {
-	f, err := os.Open("config.yml")
-	if err != nil {
-		return fmt.Errorf("could not open config file: %w", err)
-	}
-	defer f.Close()
-
-	decoder := yaml.NewDecoder(f)
-	err = decoder.Decode(config)
-	if err != nil {
-		return fmt.Errorf("could not decode config file: %w", err)
-	}
-
-	//TODO SMART-5: start using environmental configuration
-	//config.ServerPort = os.Getenv("PORT")
-	//config.DbPassword = os.Getenv("POSTGRES_PASSWORD")
-	//config.DbUser = os.Getenv("POSTGRES_USER")
-	//config.DbName = os.Getenv("POSTGRES_DB")
+	config.DbName = os.Getenv("POSTGRES_DB")
+	config.DbUser = os.Getenv("POSTGRES_USER")
+	config.DbPassword = os.Getenv("POSTGRES_PASSWORD")
+	config.DbHost = os.Getenv("POSTGRES_HOST")
+	config.DbPort = os.Getenv("POSTGRES_PORT")
+	config.ServerPort = os.Getenv("SERVER_PORT")
+	config.RecommenderAddress = os.Getenv("RECOMMENDER_ADDRESS")
 
 	return nil
 }

@@ -34,10 +34,11 @@ func initApp() (*application, error) {
 	}
 
 	connString := fmt.Sprintf(
-		"dbname=%s user=%s password=%s port=%s sslmode=disable",
+		"dbname=%s user=%s password=%s host=%s port=%s sslmode=disable",
 		config.DbName,
 		config.DbUser,
 		config.DbPassword,
+		config.DbHost,
 		config.DbPort,
 	)
 

@@ -43,7 +43,8 @@ func (s *Store) GetUserMovies(userId int32, pagination *Pagination) ([]*MoviePre
 	}
 	defer rows.Close()
 
-	var userMovies []*MoviePreview
+	//var userMovies []*MoviePreview
+	userMovies := make([]*MoviePreview, 0)
 
 	for rows.Next() {
 		movie := &MoviePreview{}
@@ -104,7 +105,8 @@ func (s *Store) GetMoviesPreview(pagination *Pagination) ([]*MoviePreview, error
 	}
 	defer rows.Close()
 
-	var movies []*MoviePreview
+	//var movies []*MoviePreview
+	movies := make([]*MoviePreview, 0)
 
 	for rows.Next() {
 		movie := &MoviePreview{}
@@ -131,7 +133,8 @@ func (s *Store) GetCertainMoviesPreview(ids []int32) ([]*MoviePreview, error) {
 	}
 	defer rows.Close()
 
-	var movies []*MoviePreview
+	//var movies []*MoviePreview
+	movies := make([]*MoviePreview, 0)
 
 	for rows.Next() {
 		movie := &MoviePreview{}
