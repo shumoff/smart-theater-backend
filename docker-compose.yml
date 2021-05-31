@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:12.2
+    restart: always
+    env_file:
+      - ./.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./volumes/postgresql/pg-data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    command: /dist/smart
+#    command: bash -c "while true; do sleep 1; done"
+    restart: always
+    env_file:
+      - ./.env
+    ports:
+      - "80:8080"
+    depends_on:
+      - db
+    volumes:
+      - .:/code
+      - ./volumes/log:/var/log

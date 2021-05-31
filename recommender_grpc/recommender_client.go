@@ -14,7 +14,8 @@ type RecommenderClient struct {
 }
 
 func (rc *RecommenderClient) GetRelevantMovies(userId int32, offset int32, limit int32) ([]int32, error) {
-	var movieIds []int32
+	//var movieIds []int32
+	movieIds := make([]int32, 0)
 
 	conn, err := grpc.Dial(rc.Address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
@@ -39,7 +40,8 @@ func (rc *RecommenderClient) GetRelevantMovies(userId int32, offset int32, limit
 }
 
 func (rc *RecommenderClient) GetSimilarMovies(movieId int32, offset int32, limit int32) ([]int32, error) {
-	var movieIds []int32
+	//var movieIds []int32
+	movieIds := make([]int32, 0)
 
 	conn, err := grpc.Dial(rc.Address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
@@ -64,7 +66,8 @@ func (rc *RecommenderClient) GetSimilarMovies(movieId int32, offset int32, limit
 }
 
 func (rc *RecommenderClient) GetRelevantSimilarMovies(userId int32, movieId int32, offset int32, limit int32) ([]int32, error) {
-	var movieIds []int32
+	//var movieIds []int32
+	movieIds := make([]int32, 0)
 
 	conn, err := grpc.Dial(rc.Address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
