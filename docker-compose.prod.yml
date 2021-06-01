@@ -12,7 +12,7 @@ services:
       - ./volumes/postgresql/pg-data:/var/lib/postgresql/data
 
   web:
-    build: .
+    image: shumoff/smart-theater:latest
     command: /dist/smart
     restart: always
     env_file:
@@ -22,7 +22,6 @@ services:
     depends_on:
       - db
     volumes:
-      - .:/code
       - ./volumes/backend/media:/code/media
       - ./volumes/backend/static:/code/static
       - ./volumes/log:/var/log

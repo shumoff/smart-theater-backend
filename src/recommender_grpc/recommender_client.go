@@ -6,7 +6,7 @@ import (
 	"google.golang.org/grpc"
 	"time"
 
-	pb "github.com/shumoff/smart-theater-backend/protobuffs"
+	pb "github.com/shumoff/smart-theater-backend/src/protobuffs"
 )
 
 type RecommenderClient struct {

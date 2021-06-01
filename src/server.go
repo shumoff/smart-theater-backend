@@ -13,7 +13,7 @@ import (
 
 	"github.com/gorilla/schema"
 
-	"github.com/shumoff/smart-theater-backend/recommender_grpc"
+	"github.com/shumoff/smart-theater-backend/src/recommender_grpc"
 )
 
 var decoder = schema.NewDecoder()
@@ -50,7 +50,7 @@ func parsePagination(queryParams url.Values) (*Pagination, error) {
 	if err != nil {
 		return nil, fmt.Errorf("invalid offset or limit: %w", err)
 	}
-	if pagination.Limit == 0 {
+	if pagination.Limit == 0 || pagination.Limit > 200 {
 		pagination.Limit = 20
 	}
 

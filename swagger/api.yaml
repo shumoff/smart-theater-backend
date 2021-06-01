@@ -54,6 +54,7 @@ components:
       required:
         - movie_id
         - title
+        - genres
       properties:
         movie_id:
           type: integer
@@ -75,6 +76,11 @@ components:
           type: string
           description: Movie poster link
           example: https://m.media-amazon.com/images/M/MV5BMDU2ZWJlMjktMTRhMy00ZTA5LWEzNDgtYmNmZTEwZTViZWJkXkEyXkFqcGdeQXVyNDQ2OTk4MzI@._V1_FMjpg_UX1005_.jpg
+        genres:
+          type: array
+          items:
+            type: string
+            example: Action
 
     v1PreviewMovieInfo:
       type: object
@@ -82,6 +88,7 @@ components:
       required:
         - movie_id
         - title
+        - genres
       properties:
         movie_id:
           type: integer
@@ -103,6 +110,11 @@ components:
           type: string
           description: Movie poster link
           example: https://m.media-amazon.com/images/M/MV5BMDU2ZWJlMjktMTRhMy00ZTA5LWEzNDgtYmNmZTEwZTViZWJkXkEyXkFqcGdeQXVyNDQ2OTk4MzI@._V1_FMjpg_UX1005_.jpg
+        genres:
+          type: array
+          items:
+            type: string
+            example: Action
 
   requestBodies:
     v2PostMovieRatingRequest:

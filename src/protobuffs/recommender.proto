@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/shumoff/smart-theater-backend/protobuffs";
+option go_package = "github.com/shumoff/smart-theater-backend/src/protobuffs";
 
 
 message NewRatingRequest {
