@@ -17,9 +17,9 @@ jobs:
           port: ${{ secrets.DEPLOY_SERVER_PORT }}
           key: ${{ secrets.DEPLOY_SERVER_KEY }}
           source: "docker-compose.prod.yml"
-          target: "/home/${{ secrets.DEPLOY_SERVER_USERNAME }}/smart-theater/backend/docker-compose.new.yml"
+          target: "/home/${{ secrets.DEPLOY_SERVER_USERNAME }}/smart-theater/backend"
 
-      - name: stop application
+      - name: rerun application
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.DEPLOY_SERVER_HOST }}
@@ -28,7 +28,8 @@ jobs:
           port: ${{ secrets.DEPLOY_SERVER_PORT }}
           script: |
             cd /home/${{ secrets.DEPLOY_SERVER_USERNAME }}/smart-theater/backend
-            docker-compose -f docker-compose.new.yml pull
+            docker-compose -f docker-compose.prod.yml pull
             docker-compose down
-            mv docker-compose.new.yml docker-compose.yml
+            mv docker-compose.prod.yml docker-compose.yml
+            rm docker-compose.prod.yml
             docker-compose up -d
